@@ -15,3 +15,16 @@ A full-stack inventory reservation platform built with NestJS (backend) and Next
 - `packages/shared` — Shared Zod schemas and TypeScript types
 
 ## How to run locally
+
+
+## Environment Variables
+
+Created a '.env' file inside 'apps/backend' with the following:
+
+```
+env
+DATABASE_URL=           # Supabase pooled connection string
+DIRECT_URL=             # Supabase direct connection string (used for migrations)
+REDIS_URL=              # Upstash Redis connection string
+PORT=3001
+```
