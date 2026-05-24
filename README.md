@@ -27,3 +27,20 @@ DIRECT_URL=             # Supabase direct connection string (used for migrations
 REDIS_URL=              # Upstash Redis connection string
 PORT=3001
 ```
+
+
+## API Endpoints
+
+### Products
+
+**-**`GET /products` — list all products with stock levels
+
+### Warehouse
+
+**-**`GET /warehouses` — list all warehouses with stock
+
+### Reservations
+
+**-**`POST /reservations` — create a reservation
+**-**`PATCH /reservations/:id/confirm` — confirm a reservation
+**-**`PATCH /reservations/:id/release` — release a reservation
