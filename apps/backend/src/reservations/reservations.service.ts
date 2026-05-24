@@ -133,4 +133,14 @@ export class ReservationsService {
         }
     }
 
+    async findAll() {
+        return this.prisma.reservation.findMany({
+            include: {
+                product: true,
+                warehouse: true,
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
+
 }
