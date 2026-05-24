@@ -94,8 +94,8 @@ PORT=3001
 ### Reservations
 
 **-**`POST /reservations` — create a reservation
-**-**`PATCH /reservations/:id/confirm` — confirm a reservation
-**-**`PATCH /reservations/:id/release` — release a reservation
+**-**`POST /reservations/:id/confirm` — confirm a reservation
+**-**`POST /reservations/:id/release` — release a reservation
 
 ## Reservation Expiry
 
