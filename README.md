@@ -5,7 +5,7 @@ A full-stack inventory reservation platform built with NestJS (backend) and Next
 ## Tech Stack
 
 - **Backend:** NestJS, Prisma, PostgreSQL (Supabase), Redis (Upstash)
-- **Frontend:** Next.js 14 (App Router), Tailwind CSS, shadcn/ui, Zod
+- **Frontend:** Next.js 16 (App Router), Tailwind CSS, shadcn/ui, Zod
 - **Monorepo:** pnpm workspaces
 
 ## Project Structure
@@ -26,7 +26,7 @@ A full-stack inventory reservation platform built with NestJS (backend) and Next
 1. Clone the repo
 
 ```bash
-   git clone https://github.com/YOUR_USERNAME/allo-health.git
+   git clone https://github.com/Aadarsh1204/allo-health.git
    cd allo-health
 ```
 
@@ -40,7 +40,7 @@ A full-stack inventory reservation platform built with NestJS (backend) and Next
 3. Set up environment variables
 
    - Create `apps/backend/.env` (see Environment Variables section)
-   - Create `apps/frontend/.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:3001`
+   - Create `apps/frontend/.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:3001/api`
 4. Run database migrations
 
 ```bash
@@ -85,17 +85,17 @@ PORT=3001
 
 ### Products
 
-**-**`GET /products` — list all products with stock levels
+**-**`GET /api/products` — list all products with stock levels
 
 ### Warehouse
 
-**-**`GET /warehouses` — list all warehouses with stock
+**-**`GET /api/warehouses` — list all warehouses with stock
 
 ### Reservations
 
-**-**`POST /reservations` — create a reservation
-**-**`POST /reservations/:id/confirm` — confirm a reservation
-**-**`POST /reservations/:id/release` — release a reservation
+**-**`POST /api/reservations` — create a reservation
+**-**`POST /api/reservations/:id/confirm` — confirm a reservation
+**-**`POST /api/reservations/:id/release` — release a reservation
 
 ## Reservation Expiry
 
@@ -127,6 +127,13 @@ The `POST /api/reservations` and `POST /api/reservations/:id/confirm` endpoints 
 
 If a client retries a request due to a network timeout, the server guarantees the operation only happens once. The customer won't end up with two reservations for the same checkout attempt.
 
+
+## Deployed URLs
+
+- Frontend: https://frontend-production-00d0.up.railway.app
+- Backend: https://backend-production-4699.up.railway.app
+
+
 ## Production Considerations
 
 ### Expiry mechanism in production
@@ -137,7 +144,6 @@ The cron job runs inside the NestJS process. In production on Railway, this work
 ### Trade-offs made
 
 - **Cron vs job queue:** Chose a simple cron job over BullMQ for speed of implementation. BullMQ would be more precise and resilient.
-- **Monorepo structure:** Used pnpm workspaces for a clean monorepo. With more time I'd add a proper build pipeline (Turborepo) for caching and parallelising builds.
 - **No authentication:** The API has no auth layer. In production every endpoint would require a JWT or session token.
 - **No pagination:** The products and reservations endpoints return all records. With large datasets these would need cursor-based pagination.
 - **Frontend validation only at form level:** Zod validates on the frontend but the backend DTOs don't use Zod — they use plain TypeScript classes. With more time I'd share the Zod schemas end-to-end including backend validation pipes.
