@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Product, Stock } from '@/types';
 import Link from 'next/link';
+import { CreateReservationSchema } from '@allo/shared';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -16,6 +18,7 @@ export default function ProductsPage() {
   const [quantity, setQuantity] = useState<Record<string, number>>({});
   const [reserving, setReserving] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     api.get('/products')
@@ -39,21 +42,34 @@ export default function ProductsPage() {
       return;
     }
 
+    const validation = CreateReservationSchema.safeParse({
+      productId,
+      warehouseId,
+      quantity: qty,
+    });
+
+    if (!validation.success) {
+      setMessage(validation.error.issues[0].message);
+      return;
+    }
+
     setReserving(productId);
     setMessage(null);
 
     try {
-      await api.post('/reservations', {
-        productId,
-        warehouseId,
-        quantity: qty,
-        idempotencyKey: `${productId}-${warehouseId}-${Date.now()}`,
+      const res = await api.post('/reservations', validation.data, {
+        headers: {
+          'idempotency-key': `${productId}-${warehouseId}-${Date.now()}`,
+        },
       });
-      setMessage('Reservation created successfully');
-      const res = await api.get('/products');
-      setProducts(res.data);
+      router.push(`/reservations/${res.data.id}`);
     } catch (err: any) {
-      setMessage(err.response?.data?.message || 'Something went wrong');
+      const status = err.response?.status;
+      if (status === 409) {
+        setMessage('Not enough stock available for this product in the selected warehouse.');
+      } else {
+        setMessage(err.response?.data?.message || 'Something went wrong');
+      }
     } finally {
       setReserving(null);
     }

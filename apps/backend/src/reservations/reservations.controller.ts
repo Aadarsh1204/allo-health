@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Headers } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 
@@ -11,17 +11,28 @@ export class ReservationsController {
         return this.reservationsService.findAll();
     }
 
+    @Get(':id')
+        findOne(@Param('id') id: string) {
+        return this.reservationsService.findOne(id);
+    }
+
     @Post()
-    create(@Body() dto: CreateReservationDto) {
-        return this.reservationsService.create(dto);
+    create(
+        @Body() dto: CreateReservationDto,
+        @Headers('idempotency-key') idempotencyKey?: string,
+    ) {
+        return this.reservationsService.create(dto, idempotencyKey);
     }
 
-    @Patch(':id/confirm')
-    confirm(@Param('id') id: string) {
-        return this.reservationsService.confirm(id);
+    @Post(':id/confirm')
+    confirm(
+        @Param('id') id: string,
+        @Headers('idempotency-key') idempotencyKey?: string,
+    ) {
+        return this.reservationsService.confirm(id, idempotencyKey);
     }
 
-    @Patch(':id/release')
+    @Post(':id/release')
     release(@Param('id') id: string) {
         return this.reservationsService.release(id);
     }
