@@ -16,7 +16,6 @@ A full-stack inventory reservation platform built with NestJS (backend) and Next
 
 ## How to run locally
 
-
 ## Environment Variables
 
 Created a '.env' file inside 'apps/backend' with the following:
